@@ -10,7 +10,7 @@ public:
 
 private:
     sqlite3* db_;
+    void createTable();
     void insertRecord(const std::string& partNumber, const std::string& partName,
                       int quantity, double unitPrice);
-    std::string randomPartName(int seed);
 };

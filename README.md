@@ -48,7 +48,7 @@ Project1/
 
 ## 사전 조건
 
-실행 전 DataPersistence-KDH 프로젝트를 먼저 실행해 `inventory.db` 파일이 생성되어 있어야 합니다.
+별도의 사전 실행 없이 단독으로 실행할 수 있습니다. DB 파일과 `inventory` 테이블이 없으면 자동으로 생성합니다.
 
 DB 경로 (`main.cpp` 내 `DB_PATH` 상수):
 ```

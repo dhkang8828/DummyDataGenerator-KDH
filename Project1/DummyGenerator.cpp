@@ -23,6 +23,27 @@ DummyGenerator::DummyGenerator(const std::string& dbPath) : db_(nullptr) {
     if (sqlite3_open(dbPath.c_str(), &db_) != SQLITE_OK)
         throw std::runtime_error("DB 열기 실패: " + std::string(sqlite3_errmsg(db_)));
     std::cout << "[DB] 연결 성공: " << dbPath << "\n";
+    createTable();
+}
+
+void DummyGenerator::createTable() {
+    const char* sql = R"(
+        CREATE TABLE IF NOT EXISTS inventory (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            part_number TEXT    NOT NULL UNIQUE,
+            part_name   TEXT    NOT NULL,
+            quantity    INTEGER NOT NULL DEFAULT 0,
+            unit_price  REAL    NOT NULL DEFAULT 0.0,
+            updated_at  TEXT    NOT NULL DEFAULT (datetime('now','localtime'))
+        );
+    )";
+    char* errMsg = nullptr;
+    if (sqlite3_exec(db_, sql, nullptr, nullptr, &errMsg) != SQLITE_OK) {
+        std::string msg = errMsg;
+        sqlite3_free(errMsg);
+        throw std::runtime_error("테이블 생성 실패: " + msg);
+    }
+    std::cout << "[DB] inventory 테이블 준비 완료\n";
 }
 
 DummyGenerator::~DummyGenerator() {
