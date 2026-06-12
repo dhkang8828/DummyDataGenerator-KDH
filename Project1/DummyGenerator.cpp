@@ -50,14 +50,29 @@ DummyGenerator::~DummyGenerator() {
     if (db_) sqlite3_close(db_);
 }
 
+int DummyGenerator::getNextIndex() {
+    const char* sql =
+        "SELECT COALESCE(MAX(CAST(SUBSTR(part_number, 5) AS INTEGER)), 0) "
+        "FROM inventory WHERE part_number LIKE 'DUM-%';";
+    sqlite3_stmt* stmt = nullptr;
+    if (sqlite3_prepare_v2(db_, sql, -1, &stmt, nullptr) != SQLITE_OK)
+        throw std::runtime_error(sqlite3_errmsg(db_));
+    int next = 1;
+    if (sqlite3_step(stmt) == SQLITE_ROW)
+        next = sqlite3_column_int(stmt, 0) + 1;
+    sqlite3_finalize(stmt);
+    return next;
+}
+
 void DummyGenerator::generate(int count) {
     std::mt19937 rng(std::random_device{}());
     std::uniform_int_distribution<int>    qtyDist(1, 9999);
     std::uniform_real_distribution<double> priceDist(100.0, 99999.0);
     std::uniform_int_distribution<int>    catalogDist(0, (int)PART_CATALOG.size() - 1);
 
+    int start = getNextIndex();
     int inserted = 0;
-    for (int i = 1; i <= count; ++i) {
+    for (int i = start; i < start + count; ++i) {
         std::ostringstream pn;
         pn << "DUM-" << std::setw(4) << std::setfill('0') << i;
 

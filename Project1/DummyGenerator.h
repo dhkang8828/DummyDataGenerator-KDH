@@ -11,6 +11,7 @@ public:
 private:
     sqlite3* db_;
     void createTable();
+    int  getNextIndex();
     void insertRecord(const std::string& partNumber, const std::string& partName,
                       int quantity, double unitPrice);
 };
