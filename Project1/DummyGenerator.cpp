@@ -72,9 +72,9 @@ void DummyGenerator::generate(int count) {
 
     int start = getNextIndex();
     int inserted = 0;
-    for (int i = start; i < start + count; ++i) {
+    for (int i = 0; i < count; ++i) {
         std::ostringstream pn;
-        pn << "DUM-" << std::setw(4) << std::setfill('0') << i;
+        pn << "DUM-" << std::setw(4) << std::setfill('0') << (start + i);
 
         int ci = catalogDist(rng);
         const auto& [type, specs] = PART_CATALOG[ci];
@@ -83,7 +83,7 @@ void DummyGenerator::generate(int count) {
 
         try {
             insertRecord(pn.str(), partName, qtyDist(rng), priceDist(rng));
-            std::cout << "  [" << i << "/" << count << "] " << pn.str() << " | " << partName << "\n";
+            std::cout << "  [" << (i + 1) << "/" << count << "] " << pn.str() << " | " << partName << "\n";
             ++inserted;
         }
         catch (const std::exception& e) {
